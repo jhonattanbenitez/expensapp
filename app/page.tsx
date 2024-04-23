@@ -1,16 +1,20 @@
+'use client'
+
+import { useMemo } from "react";
 import BudgetForm from "./components/BudgetForm";
-import { BudgetProvider } from "./context/BudgetContext";
+import { useBudget } from "./hooks/useBudget";
+import BudgetTracker from "./components/BudgetTracker";
 
 export default function Home() {
+  const {state} = useBudget()
+  const isValidBudget = useMemo(() => state.budget > 0, [state.budget])
   return (
     <>
       <header className="bg-emerald-600 py-8 max-h-72">
         <h1 className="uppercase text-center font-black text-4xl text-white">Expenses Planner</h1>
       </header>
       <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg mt-10 p-10">
-        <BudgetProvider>
-          <BudgetForm />
-        </BudgetProvider>
+        {isValidBudget ? <BudgetTracker /> : <BudgetForm />}
       </div>
     </>
   );
