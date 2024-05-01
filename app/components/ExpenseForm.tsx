@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 import InputText from "./InputText";
 import { DraftExpense, Value } from "../types";
 import { categories } from "../data/categories";
@@ -6,6 +6,7 @@ import DatePicker from "react-date-picker";
 import 'react-calendar/dist/Calendar.css'
 import 'react-date-picker/dist/DatePicker.css'
 import ErrorMessage from "./ErrorMessage";
+import SuccessMessage from "./SuccessMessage"
 import { useBudget } from "../hooks/useBudget";
 
 
@@ -37,8 +38,36 @@ export default function ExpenseForm() {
         date: value
        })
     }
-    const [error, setError] = useState('')
+    const [error, setError] = useState<string | null>(null)
+    const [success, setSuccess] = useState<string | null>(null)
+    const [fade, setFade] = useState(false)
     const {dispatch} = useBudget()
+
+        useEffect(() => {
+        if (success) {
+            const timer = setTimeout(() => {
+            setFade(true); // Start fading out after 2 seconds
+            setTimeout(() => {
+                setSuccess(null);
+                setFade(false); // Reset fade to use again for the next message
+            }, 1000); // After one second of fading, clear the message
+            }, 2000);
+            return () => clearTimeout(timer);
+        }
+        }, [success]);
+
+        useEffect(() => {
+          if (error) {
+            const timer = setTimeout(() => {
+                setFade(true); // Start fading out after 2 seconds
+                setTimeout(() => {
+                setError(null);
+                setFade(false); // Reset fade to use again for the next message
+                }, 1000); // After one second of fading, clear the message
+            }, 2000);
+            return () => clearTimeout(timer);
+          }
+        }, [error]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -48,13 +77,28 @@ export default function ExpenseForm() {
         }
         // add a new expense
         dispatch({type:'add-expense', payload: {expense}})
+
+        // Success
+
+        setSuccess('The expense was added')
+
+        // reset form
+
+        setExpense({
+          amount: 0,
+          expenseName: "",
+          category: "",
+          date: new Date(),
+        });
+        setError(null);
     }
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
       <legend className="uppercase text-center text-2xl font-light border-b-4 py-2 border-emerald-500">
         New Expense
       </legend>
-      {error && <ErrorMessage>{error}</ErrorMessage>}
+      {error && <ErrorMessage fade={fade}>{error}</ErrorMessage>}
+      {success && <SuccessMessage fade={fade}>{success}</SuccessMessage>}
       <div className="flex flex-col gap-2">
         <label htmlFor="expenseName" className="text-xl">
           Expense:
