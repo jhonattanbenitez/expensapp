@@ -5,6 +5,7 @@ import BudgetForm from "./components/BudgetForm";
 import { useBudget } from "./hooks/useBudget";
 import BudgetTracker from "./components/BudgetTracker";
 import ExpenseModal from "./components/ExpensesModal";
+import ExpenseList from "./components/ExpenseList";
 
 export default function Home() {
   const { state } = useBudget();
@@ -20,7 +21,8 @@ export default function Home() {
         {isValidBudget ? <BudgetTracker /> : <BudgetForm />}
       </div>
       {isValidBudget && (
-        <main className="max-w-3xl mx-aut py-10">
+        <main className="max-w-3xl mx-auto py-10">
+          <ExpenseList />
           <ExpenseModal />
         </main>
       )}
