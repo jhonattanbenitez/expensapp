@@ -106,7 +106,7 @@ export default function ExpenseForm() {
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
       <legend className="uppercase text-center text-2xl font-light border-b-4 py-2 border-emerald-500">
-        New Expense
+        {state.editingId ? "Edit Expense" : "New Expense"}
       </legend>
       {error && <ErrorMessage fade={fade}>{error}</ErrorMessage>}
       {success && <SuccessMessage fade={fade}>{success}</SuccessMessage>}
@@ -166,7 +166,7 @@ export default function ExpenseForm() {
       <input
         type="submit"
         className="bg-emerald-600 cursor-pointer w-full p-2 text-white uppercase font-light rounded-lg mt-2"
-        value={"add expense"}
+        value={state.editingId ? "Save Changes" : "add expense"}
       />
     </form>
   );
