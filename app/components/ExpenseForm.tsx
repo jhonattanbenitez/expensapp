@@ -3,95 +3,106 @@ import InputText from "./InputText";
 import { DraftExpense, Value } from "../types";
 import { categories } from "../data/categories";
 import DatePicker from "react-date-picker";
-import 'react-calendar/dist/Calendar.css'
-import 'react-date-picker/dist/DatePicker.css'
+import "react-calendar/dist/Calendar.css";
+import "react-date-picker/dist/DatePicker.css";
 import ErrorMessage from "./ErrorMessage";
-import SuccessMessage from "./SuccessMessage"
+import SuccessMessage from "./SuccessMessage";
 import { useBudget } from "../hooks/useBudget";
 
-
-
 export default function ExpenseForm() {
-    const [expense, setExpense] = useState<DraftExpense>({
-        amount: 0,
-        expenseName: '',
-        category: '',
-        date: new Date()
-    })
-   const handleChange = (
-     e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
-   ) => {
-     const { name, value } = e.target;
-
-     const isAmountField = name === "amount";
-     const newValue = isAmountField ? parseFloat(value) || 0 : value;
-
-     setExpense((prevExpense) => ({
-       ...prevExpense,
-       [name]: newValue,
-     }));
-   };
-
-    const handleChangeDate = (value: Value) => {
-       setExpense({
-        ...expense,
-        date: value
-       })
+  const [expense, setExpense] = useState<DraftExpense>({
+    amount: 0,
+    expenseName: "",
+    category: "",
+    date: new Date(),
+  });
+  const { dispatch, state } = useBudget();
+  useEffect(() => {
+    if (state.editingId) {
+      const editingExpense = state.expenses.filter(
+        (currentExpense) => currentExpense.id === state.editingId
+      )[0];
+      setExpense(editingExpense);
     }
-    const [error, setError] = useState<string | null>(null)
-    const [success, setSuccess] = useState<string | null>(null)
-    const [fade, setFade] = useState(false)
-    const {dispatch} = useBudget()
+  }, [state.editingId, state.expenses]);
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
 
-        useEffect(() => {
-        if (success) {
-            const timer = setTimeout(() => {
-            setFade(true); // Start fading out after 2 seconds
-            setTimeout(() => {
-                setSuccess(null);
-                setFade(false); // Reset fade to use again for the next message
-            }, 1000); // After one second of fading, clear the message
-            }, 2000);
-            return () => clearTimeout(timer);
-        }
-        }, [success]);
+    const isAmountField = name === "amount";
+    const newValue = isAmountField ? parseFloat(value) || 0 : value;
 
-        useEffect(() => {
-          if (error) {
-            const timer = setTimeout(() => {
-                setFade(true); // Start fading out after 2 seconds
-                setTimeout(() => {
-                setError(null);
-                setFade(false); // Reset fade to use again for the next message
-                }, 1000); // After one second of fading, clear the message
-            }, 2000);
-            return () => clearTimeout(timer);
-          }
-        }, [error]);
+    setExpense((prevExpense) => ({
+      ...prevExpense,
+      [name]: newValue,
+    }));
+  };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        if(Object.values(expense).includes('')) {
-            setError('All fields are required')
-            return
-        }
-        // add a new expense
-        dispatch({type:'add-expense', payload: {expense}})
+  const handleChangeDate = (value: Value) => {
+    setExpense({
+      ...expense,
+      date: value,
+    });
+  };
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [fade, setFade] = useState(false);
+  
 
-        // Success
-
-        setSuccess('The expense was added')
-
-        // reset form
-
-        setExpense({
-          amount: 0,
-          expenseName: "",
-          category: "",
-          date: new Date(),
-        });
-        setError(null);
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setFade(true); // Start fading out after 2 seconds
+        setTimeout(() => {
+          setSuccess(null);
+          setFade(false); // Reset fade to use again for the next message
+        }, 1000); // After one second of fading, clear the message
+      }, 2000);
+      return () => clearTimeout(timer);
     }
+  }, [success]);
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setFade(true); // Start fading out after 2 seconds
+        setTimeout(() => {
+          setError(null);
+          setFade(false); // Reset fade to use again for the next message
+        }, 1000); // After one second of fading, clear the message
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (Object.values(expense).includes("")) {
+      setError("All fields are required");
+      return;
+    }
+    // add a new expense or update expense
+    if (state.editingId) {
+      dispatch({type: "udpdate-expense", payload: {expense: {id: state.editingId, ...expense}}})
+    } else {
+      dispatch({ type: "add-expense", payload: { expense } });
+    }
+
+    // Success
+
+    setSuccess("The expense was added");
+
+    // reset form
+
+    setExpense({
+      amount: 0,
+      expenseName: "",
+      category: "",
+      date: new Date(),
+    });
+    setError(null);
+  };
   return (
     <form className="space-y-5" onSubmit={handleSubmit}>
       <legend className="uppercase text-center text-2xl font-light border-b-4 py-2 border-emerald-500">
@@ -115,13 +126,25 @@ export default function ExpenseForm() {
         <label htmlFor="amount" className="text-xl">
           Quantity:
         </label>
-        <InputText id="amount" placeholder="add amount" name="amount" value={expense.amount} onChange={handleChange}/>
+        <InputText
+          id="amount"
+          placeholder="add amount"
+          name="amount"
+          value={expense.amount}
+          onChange={handleChange}
+        />
       </div>
       <div className="flex flex-col gap-2">
         <label htmlFor="category" className="text-xl">
           Category:
         </label>
-        <select name="category" id="category" className="bg-slate-100 p-2" value={expense.category} onChange={handleChange}>
+        <select
+          name="category"
+          id="category"
+          className="bg-slate-100 p-2"
+          value={expense.category}
+          onChange={handleChange}
+        >
           <option value="">Select a category</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
@@ -132,9 +155,13 @@ export default function ExpenseForm() {
       </div>
       <div className="flex flex-col gap-2">
         <label htmlFor="expenseName" className="text-xl">
-          Expense Date: 
+          Expense Date:
         </label>
-       <DatePicker className="bg-slate-100 p-2 border-0" value={expense.date} onChange={handleChangeDate}/>
+        <DatePicker
+          className="bg-slate-100 p-2 border-0"
+          value={expense.date}
+          onChange={handleChangeDate}
+        />
       </div>
       <input
         type="submit"
