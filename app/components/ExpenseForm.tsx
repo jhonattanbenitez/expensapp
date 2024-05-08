@@ -16,13 +16,14 @@ export default function ExpenseForm() {
     category: "",
     date: new Date(),
   });
-  const { dispatch, state } = useBudget();
+  const { dispatch, state, totalExpenses, budgetAvailable } = useBudget();
   useEffect(() => {
     if (state.editingId) {
       const editingExpense = state.expenses.filter(
         (currentExpense) => currentExpense.id === state.editingId
       )[0];
       setExpense(editingExpense);
+      setPrevAvailable(editingExpense.amount)
     }
   }, [state.editingId, state.expenses]);
   const handleChange = (
@@ -48,6 +49,7 @@ export default function ExpenseForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [fade, setFade] = useState(false);
+  const [prevAvailable, setPrevAvailable] = useState(0)
   
 
   useEffect(() => {
@@ -82,6 +84,14 @@ export default function ExpenseForm() {
       setError("All fields are required");
       return;
     }
+
+     if ((expense.amount - prevAvailable) > budgetAvailable) {
+       setError("This amount exceeds the budget available");
+       return;
+     }
+
+
+
     // add a new expense or update expense
     if (state.editingId) {
       dispatch({type: "udpdate-expense", payload: {expense: {id: state.editingId, ...expense}}})
@@ -101,6 +111,7 @@ export default function ExpenseForm() {
       category: "",
       date: new Date(),
     });
+    setPrevAvailable(0)
     setError(null);
   };
   return (

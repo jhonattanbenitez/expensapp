@@ -1,7 +1,10 @@
 import React from 'react'
 import AmountDisplay from './AmountDisplay'
+import { useBudget } from '../hooks/useBudget';
 
 export default function BudgetTracker() {
+  const { state, totalExpenses, budgetAvailable } = useBudget()
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div className="flex justify-center">
@@ -14,9 +17,9 @@ export default function BudgetTracker() {
         >
           Reset
         </button>
-        <AmountDisplay label="budget" amount={300} />
-        <AmountDisplay label="Available" amount={200} />
-        <AmountDisplay label="Spent" amount={100} />
+        <AmountDisplay label="budget" amount={state.budget} />
+        <AmountDisplay label="Available" amount={budgetAvailable} />
+        <AmountDisplay label="Spent" amount={totalExpenses} />
       </div>
     </div>
   );
