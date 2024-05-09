@@ -6,7 +6,7 @@ import { categories } from "../data/categories";
 import 'react-circular-progressbar/dist/styles.css'
 
 export default function BudgetTracker() {
-  const { state, totalExpenses, budgetAvailable } = useBudget();
+  const { state, totalExpenses, budgetAvailable, dispatch } = useBudget();
 
   // Helper to find the total spent for a given category
   const getCategoryTotal = (categoryId: string) => {
@@ -51,6 +51,7 @@ export default function BudgetTracker() {
         <button
           type="button"
           className="bg-red-700 w-full p-2 text-white uppercase font-bold rounded-lg"
+          onClick={() => dispatch({type: "reset-app"})}
         >
           Reset
         </button>
