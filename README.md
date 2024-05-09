@@ -1,3 +1,20 @@
+# Expense Tracker App
+## Overview:
+
+The Expense Tracker App is a comprehensive web application designed to assist individuals and small business owners in managing their finances by tracking and categorizing their expenses. With a focus on user-friendly design, the app offers powerful tools to input, organize, and analyze financial data, helping users make informed budgeting decisions.
+
+## Key Features:
+
+* Expense Input and Tracking: Allows users to quickly add expenses, detailing the amount, date, category, and notes.
+* Categorization: Supports custom and predefined categories for expenses to facilitate detailed financial management and reporting.
+* Analytics and Reporting: Provides visual insights into spending patterns with percentage breakdowns by category, enhancing financial oversight and budget planning.
+
+## Technologies Used:
+
+### Frontend: 
+
+Developed using React with Next.js, enhancing the user experience with server-side rendering and static generation capabilities. This technology stack is chosen for its robust ecosystem and its ability to improve performance and SEO outcomes.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
