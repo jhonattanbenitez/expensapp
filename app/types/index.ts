@@ -15,5 +15,12 @@ export type Value = ValuePiece | [ValuePiece, ValuePiece]
 export type Category = {
     id: string
     name: string
-    icon: string 
+    icon: string
+    color: string 
+}
+
+// A type for tracking cumulative expenses per category
+export type CategoryExpense = {
+  categoryId: string;
+  total: number;
 }

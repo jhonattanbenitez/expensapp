@@ -14,6 +14,7 @@ export default function Home() {
   useEffect(() => {
     localStorage.setItem('budget', state.budget.toString())
     localStorage.setItem('expenses', JSON.stringify(state.expenses))
+    localStorage.setItem('categoryExpenses', JSON.stringify(state.categoryExpenses))
   }, [state])
 
   return (
