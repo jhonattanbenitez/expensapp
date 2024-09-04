@@ -13,10 +13,12 @@ export default function Home() {
   const isValidBudget = useMemo(() => state.budget > 0, [state.budget]);
  
   useEffect(() => {
-    localStorage.setItem('budget', state.budget.toString())
-    localStorage.setItem('expenses', JSON.stringify(state.expenses))
-    localStorage.setItem('categoryExpenses', JSON.stringify(state.categoryExpenses))
-  }, [state])
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('budget', state.budget.toString())
+        localStorage.setItem('expenses', JSON.stringify(state.expenses))
+        localStorage.setItem('categoryExpenses', JSON.stringify(state.categoryExpenses))
+      }
+    }, [state])
 
   return (
     <>

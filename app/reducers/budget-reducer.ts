@@ -22,18 +22,27 @@ export type BudgetState = {
 };
 
 const initialBudget = (): number => {
-  const localStorageBudget = localStorage.getItem("budget");
-  return localStorageBudget ? +localStorageBudget : 0;
+  if (typeof localStorage !== "undefined") {
+    const localStorageBudget = localStorage.getItem("budget");
+    return localStorageBudget ? +localStorageBudget : 0;
+  }
+  return 0;
 };
 
 const localStorageExpenses = (): Expense[] => {
-  const localStorageExpenses = localStorage.getItem("expenses");
-  return localStorageExpenses ? JSON.parse(localStorageExpenses) : [];
+  if (typeof localStorage !== "undefined") {
+    const localStorageExpenses = localStorage.getItem("expenses");
+    return localStorageExpenses ? JSON.parse(localStorageExpenses) : [];
+  }
+  return [];
 };
 
 const loadCategoryExpensesFromLocalStorage = (): CategoryExpense[] => {
-  const storedCategoryExpenses = localStorage.getItem("categoryExpenses");
-  return storedCategoryExpenses ? JSON.parse(storedCategoryExpenses) : [];
+  if (typeof localStorage !== "undefined") {
+    const storedCategoryExpenses = localStorage.getItem("categoryExpenses");
+    return storedCategoryExpenses ? JSON.parse(storedCategoryExpenses) : [];
+  }
+  return [];
 };
 
 export const initialState: BudgetState = {
